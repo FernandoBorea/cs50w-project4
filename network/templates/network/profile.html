@@ -1,0 +1,23 @@
+{% extends 'network/layout.html' %}
+
+{% block body %}
+
+    <div class="profile-container m-4">
+        {% if username == request.user.username %}
+            <h1>My profile</h1>
+        {% else %}
+            <h1>{{ username }}'s Profile</h1>
+            {% if not followed %}
+                <button class="btn btn-primary">Follow</button>
+            {% else %}
+                <button class="btn btn-primary">Unfollow</button>
+            {% endif %}
+        {% endif %}
+
+        <div class="follower-info d-flex flex-row mt-3">
+            <h5 class="mr-2">Followers: {{ username.followers_relname.count }}</h5>
+            <h5>Following: {{ username.followed_by.count }}</h5>
+        </div>
+    </div>
+
+{% endblock %}

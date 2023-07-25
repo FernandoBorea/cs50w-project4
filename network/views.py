@@ -98,3 +98,13 @@ def create_post(request):
 
         return HttpResponseRedirect(reverse('index'))
 
+
+def profile(request, username):
+    
+    user = User.objects.get(username=username)
+
+    return render(request, 'network/profile.html', {
+        'username': username,
+        'followed': user.followed_by.filter(username=request.user.username)
+    })
+
