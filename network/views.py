@@ -4,11 +4,25 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Post
+from django import forms
+
+# Forms
+class NewPostForm(forms.ModelForm):
+
+    class Meta:
+        model = Post
+        fields = ('post',)
+        widgets =  {
+            'post': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'What\'s on your mind?'})
+        }
+
 
 
 def index(request):
-    return render(request, "network/index.html")
+    return render(request, "network/index.html", {
+        'new_post_form': NewPostForm()        
+    })
 
 
 def login_view(request):
