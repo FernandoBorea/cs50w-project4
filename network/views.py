@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from .models import User, Post
 from django import forms
+from django.contrib.auth.decorators import login_required
 
 # Forms
 class NewPostForm(forms.ModelForm):
@@ -16,12 +17,16 @@ class NewPostForm(forms.ModelForm):
         widgets =  {
             'post': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'What\'s on your mind?'})
         }
-
-
+        labels = {
+            'post': 'Create new post'
+        }
 
 def index(request):
+    posts = Post.objects.all().order_by('-timestamp')
+
     return render(request, "network/index.html", {
-        'new_post_form': NewPostForm()        
+        'new_post_form': NewPostForm(),
+        'posts': posts     
     })
 
 
@@ -75,3 +80,21 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+    
+@login_required(login_url='login')
+def create_post(request):
+    
+    # Get the form from POST
+    post_form = NewPostForm(request.POST)
+
+    # Validate form
+    if post_form.is_valid():
+
+        # Create new Post instance and assign owner
+        new_post = post_form.save(commit=False)
+        new_post.owner = request.user
+
+        new_post.save()
+
+        return HttpResponseRedirect(reverse('index'))
+

@@ -2,14 +2,45 @@
 
 {% block body %}
     
-    <div class="new-post-container">
+    {% if request.user.is_authenticated %}
+        <div class="new-post-container m-4 p-4 border rounded">
+            <form action="{% url 'create_post' %}" method="post">
+                {% csrf_token %}
+                <h3 class="mb-3">New post</h3>
+                {{ new_post_form.post }}
+                <input type="submit" value="Create post" class="btn btn-primary mt-3">
+            </form>
+        </div>
+    {% endif %}
 
-    </div>
-    
-    <div class="all-posts-container">
-    </div>
+    <div class="all-posts-container m-4">
+        <h1>All posts</h1>
 
-    <div class="following-posts-container">
+        {% for post in posts %}
+        	
+            <div class="card m-3">
+                <div class="card-header">
+                    <a href='#' class="font-weight-bold post-owner">{{ post.owner.username }}</a>
+                </div>
+
+                <div class="card-body my-auto">
+                    <h6 class="card-title">{{ post.post }}</h6>
+
+                    <a href="#">Like</a> <span class="text-muted">~</span>
+                    <p class="m-0 like-count text-muted">{{ post.likes.count }}</p>
+                    
+                    {% if post.owner == request.user %}
+                        <span class="text-muted">&nbsp;</spa><a href="#" class="text-muted">Edit post </a>
+                    {% endif %}
+
+                </div>
+                <div class="card-footer text-muted">
+                    {{ post.timestamp }}
+                </div>
+            </div>
+
+        {% endfor %}
+
     </div>
 
 

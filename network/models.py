@@ -12,3 +12,6 @@ class Post(models.Model):
     post = models.TextField(max_length=1000)
     timestamp = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(to=User, related_name='liked_posts', blank=True)
+
+    def __str__(self):
+        return f'{self.owner}: {self.post}'
