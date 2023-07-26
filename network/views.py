@@ -104,7 +104,7 @@ def profile(request, username):
     user = User.objects.get(username=username)
     posts = Post.objects.filter(owner=user).order_by('-timestamp')
 
-    print(f'Current username: {user.username} ({user.email})')
+    print(f'Current username: {user.username} ({user.email}) ({User.objects.filter(username=username).exists()})')
 
     return render(request, 'network/profile.html', {
         'username': user,
