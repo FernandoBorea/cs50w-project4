@@ -7,6 +7,7 @@ from django.urls import reverse
 from .models import User, Post
 from django import forms
 from django.contrib.auth.decorators import login_required
+import json
 
 # Forms
 class NewPostForm(forms.ModelForm):
@@ -104,11 +105,25 @@ def profile(request, username):
     user = User.objects.get(username=username)
     posts = Post.objects.filter(owner=user).order_by('-timestamp')
 
-    print(f'Current username: {user.username} ({user.email}) ({User.objects.filter(username=username).exists()})')
-
     return render(request, 'network/profile.html', {
         'username': user,
         'followed': user.followers.filter(username=request.user.username),
         'posts': posts
     })
+
+
+@login_required(login_url='login')
+def follow(request):
+    
+    if request.method == 'PUT':
+
+        data = json.loads(request.body)
+        user = request.user
+
+        if data.get('target_user_id') is not None:
+            target_user = User.objects.get(pk=data['target_user_id'])
+            
+            if data.get('action') is not None and data.get('action') == 'follow':
+                user.followers.add(target_user)
+
 

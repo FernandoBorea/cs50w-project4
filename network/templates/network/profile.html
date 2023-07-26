@@ -3,14 +3,14 @@
 {% block body %}
 
     <div class="profile-container m-4">
-        {% if username == request.user.username %}
-            <h1>My profile</h1>
+        {% if username == user.username %}
+            <h1>My Profile</h1>
         {% else %}
             <h1>{{ username }}'s Profile</h1>
             {% if not followed %}
-                <button class="btn btn-primary">Follow</button>
+                <button class="btn btn-primary" id="Follow">Follow</button>
             {% else %}
-                <button class="btn btn-primary">Unfollow</button>
+                <button class="btn btn-primary" id="Unfollow">Unfollow</button>
             {% endif %}
         {% endif %}
 
@@ -23,7 +23,7 @@
         	
             <div class="card m-3">
                 <div class="card-header">
-                    <a href='/{{ post.owner.username }}' class="font-weight-bold post-owner">{{ post.owner.username }}</a>
+                    <a href="{% url 'profile' post.owner.username %}" class="font-weight-bold post-owner">{{ post.owner.username }}</a>
                 </div>
 
                 <div class="card-body my-auto">
