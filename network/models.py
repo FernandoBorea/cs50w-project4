@@ -5,7 +5,7 @@ from django.db import models
 class User(AbstractUser):
     id = models.AutoField(primary_key=True)
     following = models.ManyToManyField(to='User', related_name='followers_relname', symmetrical=False, blank=True)
-    followers = models.ManyToManyField(to='User', related_name='followed_by', symmetrical=False, blank=True)
+    followers = models.ManyToManyField(to='User', related_name='following_relname', symmetrical=False, blank=True)
 
 
 class Post(models.Model):

@@ -15,9 +15,34 @@
         {% endif %}
 
         <div class="follower-info d-flex flex-row mt-3">
-            <h5 class="mr-2">Followers: {{ username.followers_relname.count }}</h5>
-            <h5>Following: {{ username.followed_by.count }}</h5>
+            <h5 class="mr-2">Followers: {{ username.followers.count }}</h5>
+            <h5>Following: {{ username.following.count }}</h5>
         </div>
+
+        {% for post in posts %}
+        	
+            <div class="card m-3">
+                <div class="card-header">
+                    <a href='/{{ post.owner.username }}' class="font-weight-bold post-owner">{{ post.owner.username }}</a>
+                </div>
+
+                <div class="card-body my-auto">
+                    <h6 class="card-title">{{ post.post }}</h6>
+
+                    <a href="#">Like</a> <span class="text-muted">~</span>
+                    <p class="m-0 like-count text-muted">{{ post.likes.count }}</p>
+                    
+                    {% if post.owner == request.user %}
+                        <span class="text-muted">&nbsp;</spa><a href="#" class="text-muted">Edit post </a>
+                    {% endif %}
+
+                </div>
+                <div class="card-footer text-muted">
+                    {{ post.timestamp }}
+                </div>
+            </div>
+
+        {% endfor %}
     </div>
 
 {% endblock %}

@@ -100,11 +100,15 @@ def create_post(request):
 
 
 def profile(request, username):
-    
+
     user = User.objects.get(username=username)
+    posts = Post.objects.filter(owner=user).order_by('-timestamp')
+
+    print(f'Current username: {user.username} ({user.email})')
 
     return render(request, 'network/profile.html', {
-        'username': username,
-        'followed': user.followed_by.filter(username=request.user.username)
+        'username': user,
+        'followed': user.followers.filter(username=request.user.username),
+        'posts': posts
     })
 
