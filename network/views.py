@@ -107,7 +107,7 @@ def profile(request, username):
 
     return render(request, 'network/profile.html', {
         'username': user,
-        'followed': user.followers.filter(username=request.user.username),
+        'followed': user.followers.filter(username=request.user.username).exists(),
         'posts': posts
     })
 
@@ -124,6 +124,15 @@ def follow(request):
             target_user = User.objects.get(pk=data['target_user_id'])
             
             if data.get('action') is not None and data.get('action') == 'follow':
-                user.followers.add(target_user)
+                user.following.add(target_user)
+            
+            elif data.get('action') is not None and data.get('action') == 'unfollow':
+                user.following.remove(target_user)
+            
+            user.save()
+
+            return HttpResponse(status=204) # Modify this to return a serialized version of the target user
+    
+    return HttpResponseRedirect(reverse('index'))
 
 

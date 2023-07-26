@@ -8,9 +8,9 @@
         {% else %}
             <h1>{{ username }}'s Profile</h1>
             {% if not followed %}
-                <button class="btn btn-primary" id="Follow">Follow</button>
+                <button class="btn btn-primary" id="follow" data-currentUser="{{ user.id }}" data-targetUser="{{ username.id }}">Follow</button>
             {% else %}
-                <button class="btn btn-primary" id="Unfollow">Unfollow</button>
+                <button class="btn btn-primary" id="unfollow" data-currentUser="{{ user.id }}" data-targetUser="{{ username.id }}">Unfollow</button>
             {% endif %}
         {% endif %}
 
