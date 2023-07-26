@@ -3,20 +3,20 @@
 {% block body %}
 
     <div class="profile-container m-4">
-        {% if username == user.username %}
+        {% if username.username == user.username %}
             <h1>My Profile</h1>
         {% else %}
             <h1>{{ username }}'s Profile</h1>
             {% if not followed %}
-                <button class="btn btn-primary" id="follow" data-currentUser="{{ user.id }}" data-targetUser="{{ username.id }}">Follow</button>
+                <button class="btn btn-primary" id="follow" data-currentuser="{{ user.id }}" data-targetuser="{{ username.id }}">Follow</button>
             {% else %}
-                <button class="btn btn-primary" id="unfollow" data-currentUser="{{ user.id }}" data-targetUser="{{ username.id }}">Unfollow</button>
+                <button class="btn btn-primary" id="unfollow" data-currentuser="{{ user.id }}" data-targetuser="{{ username.id }}">Unfollow</button>
             {% endif %}
         {% endif %}
 
         <div class="follower-info d-flex flex-row mt-3">
-            <h5 class="mr-2">Followers: {{ username.followers.count }}</h5>
-            <h5>Following: {{ username.following.count }}</h5>
+            <h5 class="mr-2" id="followers">Followers: {{ username.followers.count }}</h5>
+            <h5 id="following">Following: {{ username.following.count }}</h5>
         </div>
 
         {% for post in posts %}

@@ -8,6 +8,8 @@ from .models import User, Post
 from django import forms
 from django.contrib.auth.decorators import login_required
 import json
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 # Forms
 class NewPostForm(forms.ModelForm):
@@ -112,6 +114,7 @@ def profile(request, username):
     })
 
 
+@csrf_exempt
 @login_required(login_url='login')
 def follow(request):
     
@@ -131,8 +134,20 @@ def follow(request):
             
             user.save()
 
-            return HttpResponse(status=204) # Modify this to return a serialized version of the target user
+            return JsonResponse({
+                'followers': target_user.followers.count(),
+                'following': target_user.following.count()
+            }, status=200)
     
     return HttpResponseRedirect(reverse('index'))
 
 
+@login_required(login_url='login')
+def following_posts(request):
+
+    following_users = request.user.following.all()
+    posts = Post.objects.filter(owner__in = following_users)
+
+    return render(request, 'network/following.html', {
+        'posts': posts
+    })

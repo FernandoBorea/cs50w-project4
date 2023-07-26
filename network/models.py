@@ -9,7 +9,7 @@ class User(AbstractUser):
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True)
-    owner = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='owner')
+    owner = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='posts')
     post = models.TextField(max_length=1000)
     timestamp = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(to=User, related_name='liked_posts', blank=True)
