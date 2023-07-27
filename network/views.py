@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.core.paginator import Paginator
 
 # Forms
 class NewPostForm(forms.ModelForm):
@@ -25,11 +26,41 @@ class NewPostForm(forms.ModelForm):
         }
 
 def index(request):
-    posts = Post.objects.all().order_by('-timestamp')
 
+    # Get all posts and create paginator
+    posts = Post.objects.all().order_by('-timestamp')
+    paginator = Paginator(posts, 10)
+
+    # Try to get the visited page number
+    page = request.GET.get('page', '1')
+
+    # Validate, if validation fails, render page 1
+    try:
+        page = int(page)
+    except ValueError:
+        return render(request, "network/index.html", {
+        'new_post_form': NewPostForm(),
+        'posts': paginator.get_page(1),
+        'page_count': range(1, paginator.num_pages + 1),
+        'pages': paginator.num_pages
+    })
+
+    # If visited page is out of range, render page 1
+    if page > paginator.num_pages:
+        return render(request, "network/index.html", {
+        'new_post_form': NewPostForm(),
+        'posts': paginator.get_page(1),
+        'page_count': range(1, paginator.num_pages + 1),
+        'pages': paginator.num_pages
+    })
+
+    # If no errors are generated, return the visited page
+    page_obj = paginator.get_page(page)
     return render(request, "network/index.html", {
         'new_post_form': NewPostForm(),
-        'posts': posts     
+        'posts': page_obj,
+        'page_count': range(1, paginator.num_pages + 1),
+        'pages': paginator.num_pages
     })
 
 

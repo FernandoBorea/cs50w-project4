@@ -6,29 +6,43 @@
     <h1>Following users' posts</h1>
 
     {% for post in posts %}
-        
-        <div class="card m-3">
-            <div class="card-header">
-                <a href="{% url 'profile' post.owner.username %}" class="font-weight-bold post-owner">{{ post.owner.username }}</a>
+        	
+            <div class="card m-3">
+                <div class="card-header">
+                    <a href="{% url 'profile' post.owner.username %}" class="font-weight-bold post-owner">{{ post.owner.username }}</a>
+                </div>
+
+                <div class="card-body my-auto">
+                    <h6 class="card-title">{{ post.post }}</h6>
+
+                    <a href="#">Like</a> <span class="text-muted">~</span>
+                    <p class="m-0 like-count text-muted">{{ post.likes.count }}</p>
+                    
+                    {% if post.owner == request.user %}
+                        <span class="text-muted">&nbsp;</spa><a href="#" class="text-muted">Edit post </a>
+                    {% endif %}
+
+                </div>
+                <div class="card-footer text-muted">
+                    {{ post.timestamp }}
+                </div>
             </div>
 
-            <div class="card-body my-auto">
-                <h6 class="card-title">{{ post.post }}</h6>
+        {% endfor %}
 
-                <a href="#">Like</a> <span class="text-muted">~</span>
-                <p class="m-0 like-count text-muted">{{ post.likes.count }}</p>
-                
-                {% if post.owner == request.user %}
-                    <span class="text-muted">&nbsp;</spa><a href="#" class="text-muted">Edit post </a>
-                {% endif %}
-
-            </div>
-            <div class="card-footer text-muted">
-                {{ post.timestamp }}
-            </div>
-        </div>
-
-    {% endfor %}
+        {% if pages > 1 %}
+            <nav aria-label="Posts navigation" class="m-3">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    
+                    {% for page in page_count %}
+                        <li class="page-item"><a class="page-link" href="#">{{ page }}</a></li>
+                    {% endfor %}
+    
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
+        {% endif %}
 
 </div>
 
