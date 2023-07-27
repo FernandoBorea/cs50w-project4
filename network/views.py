@@ -38,21 +38,11 @@ def index(request):
     try:
         page = int(page)
     except ValueError:
-        return render(request, "network/index.html", {
-        'new_post_form': NewPostForm(),
-        'posts': paginator.get_page(1),
-        'page_count': range(1, paginator.num_pages + 1),
-        'pages': paginator.num_pages
-    })
+        return HttpResponseRedirect(reverse('index'))
 
     # If visited page is out of range, render page 1
     if page > paginator.num_pages:
-        return render(request, "network/index.html", {
-        'new_post_form': NewPostForm(),
-        'posts': paginator.get_page(1),
-        'page_count': range(1, paginator.num_pages + 1),
-        'pages': paginator.num_pages
-    })
+        return HttpResponseRedirect(reverse('index'))
 
     # If no errors are generated, return the visited page
     page_obj = paginator.get_page(page)
@@ -60,7 +50,8 @@ def index(request):
         'new_post_form': NewPostForm(),
         'posts': page_obj,
         'page_count': range(1, paginator.num_pages + 1),
-        'pages': paginator.num_pages
+        'pages': paginator.num_pages,
+        'page': page
     })
 
 
@@ -138,10 +129,30 @@ def profile(request, username):
     user = User.objects.get(username=username)
     posts = Post.objects.filter(owner=user).order_by('-timestamp')
 
-    return render(request, 'network/profile.html', {
+    paginator = Paginator(posts, 10)
+
+    # Try to get the visited page number
+    page = request.GET.get('page', '1')
+
+    # Validate, if validation fails, render page 1
+    try:
+        page = int(page)
+    except ValueError:
+        return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+
+    # If visited page is out of range, render page 1
+    if page > paginator.num_pages:
+        return HttpResponseRedirect(reverse('profile', kwargs={'username': username}))
+
+    # If no errors are generated, return the visited page
+    page_obj = paginator.get_page(page)
+    return render(request, "network/profile.html", {
         'username': user,
         'followed': user.followers.filter(username=request.user.username).exists(),
-        'posts': posts
+        'posts': page_obj,
+        'page_count': range(1, paginator.num_pages + 1),
+        'pages': paginator.num_pages,
+        'page': page
     })
 
 
@@ -177,8 +188,27 @@ def follow(request):
 def following_posts(request):
 
     following_users = request.user.following.all()
-    posts = Post.objects.filter(owner__in = following_users)
+    posts = Post.objects.filter(owner__in = following_users).order_by('-timestamp')
+    paginator = Paginator(posts, 10)
 
-    return render(request, 'network/following.html', {
-        'posts': posts
+    # Try to get the visited page number
+    page = request.GET.get('page', '1')
+
+    # Validate, if validation fails, render page 1
+    try:
+        page = int(page)
+    except ValueError:
+        return HttpResponseRedirect(reverse('following_posts'))
+
+    # If visited page is out of range, render page 1
+    if page > paginator.num_pages:
+        return HttpResponseRedirect(reverse('following_posts'))
+
+    # If no errors are generated, return the visited page
+    page_obj = paginator.get_page(page)
+    return render(request, "network/following.html", {
+        'posts': page_obj,
+        'page_count': range(1, paginator.num_pages + 1),
+        'pages': paginator.num_pages,
+        'page': page
     })

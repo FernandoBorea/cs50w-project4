@@ -44,13 +44,25 @@
         {% if pages > 1 %}
             <nav aria-label="Posts navigation" class="m-3">
                 <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    {% if page == 1 %}
+                        <li class="page-item disabled"><a class="page-link" href="?page={{ page }}" tabindex="-1" aria-disabled="true">Previous</a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page|add:'-1' }}">Previous</a></li>
+                    {% endif %}
                     
-                    {% for page in page_count %}
-                        <li class="page-item"><a class="page-link" href="#">{{ page }}</a></li>
+                    {% for page_fl in page_count %}
+                        {% if page_fl == page %}
+                            <li class="page-item active"><a class="page-link" href="?page={{ page_fl }}">{{ page_fl }}</a></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_fl }}">{{ page_fl }}</a></li>
+                        {% endif %}
                     {% endfor %}
-    
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                
+                    {% if page == page_count|last %}
+                        <li class="page-item disabled"><a class="page-link" href="?page={{ page }}" tabindex="-1" aria-disabled="true">Next</a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page|add:1 }}">Next</a></li>
+                    {% endif %}
                 </ul>
             </nav>
         {% endif %}
