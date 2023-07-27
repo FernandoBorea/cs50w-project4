@@ -212,3 +212,13 @@ def following_posts(request):
         'pages': paginator.num_pages,
         'page': page
     })
+
+
+def edit_post(request):
+
+    post = Post.objects.get(pk=1)
+    form = NewPostForm(instance=post)
+
+    return render(request,'network/edit_post_form.html', {
+        'form': form
+    })
