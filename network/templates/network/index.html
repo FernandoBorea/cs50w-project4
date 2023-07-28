@@ -30,7 +30,7 @@
                     <p class="m-0 like-count text-muted">{{ post.likes.count }}</p>
                     
                     {% if post.owner == request.user %}
-                        <span class="text-muted">&nbsp;</spa><a href="#" class="text-muted">Edit post </a>
+                        <span class="text-muted">&nbsp;</spa><button href="" class="text-muted btn btn-link edit_post" data-targetpost="{{ post.id }}">Edit post</button>
                     {% endif %}
 
                 </div>

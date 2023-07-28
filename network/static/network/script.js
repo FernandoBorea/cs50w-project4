@@ -12,6 +12,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (unfollow !== null) {
         unfollow.addEventListener('click', function() {follow_manager('unfollow')});
     }
+
+    // Add listener to post edit links
+    document.querySelectorAll('.edit_post').forEach(function(element) {
+        console.log(element);
+        element.addEventListener('click', edit_post);
+    });
+
 });
 
 function follow_manager(action) {
@@ -47,4 +54,9 @@ function follow_manager(action) {
             unfollow_button.addEventListener('click', function () {follow_manager('follow')});
         }
     })
+}
+
+function edit_post() {
+    console.log(this)
+    return false;
 }

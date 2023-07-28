@@ -25,6 +25,14 @@ class NewPostForm(forms.ModelForm):
             'post': 'Create new post'
         }
 
+
+# class EditPostForm(forms.Form):
+#     post_id = forms.IntegerField(required=True)
+#     post_body = forms.Textarea(max_lenght=1000)
+
+#     widget
+
+
 def index(request):
 
     # Get all posts and create paginator
@@ -214,11 +222,23 @@ def following_posts(request):
     })
 
 
-def edit_post(request):
+def edit_post(request, post_id):
 
-    post = Post.objects.get(pk=1)
+    post = Post.objects.get(pk=post_id)
+
+    if request.method == 'POST':
+        form = NewPostForm(request.POST)
+
+        if form.is_valid():
+            post.post = form.cleaned_data['post']
+            post.save()
+
+            return HttpResponse(status=204)
+        
+    
     form = NewPostForm(instance=post)
 
     return render(request,'network/edit_post_form.html', {
-        'form': form
+        'form': form,
+        'post': post
     })

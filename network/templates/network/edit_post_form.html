@@ -1,1 +1,6 @@
-{{ form }}
+<form action="{% url 'edit_post' post.id %}" method="post">
+    {% csrf_token %}
+    <h3 class="mb-3">Edit post</h3>
+    {{ form.post }}
+    <input type="submit" value="Edit post" class="btn btn-primary mt-3">
+</form>
