@@ -16,3 +16,12 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{self.owner}: {self.post}'
+    
+    def serialize(self):
+        return {
+            'id': self.id,
+            'owner_id': self.owner.id,
+            'post': self.post,
+            'timestamp': self.timestamp,
+            'likes': self.likes.count()
+        }

@@ -222,18 +222,27 @@ def following_posts(request):
     })
 
 
+@login_required(login_url='login')
 def edit_post(request, post_id):
 
     post = Post.objects.get(pk=post_id)
 
     if request.method == 'POST':
+
         form = NewPostForm(request.POST)
 
         if form.is_valid():
+
+            # Prevent non-owner user to edit post 
+            if post.owner != request.user:
+                return JsonResponse({
+                    'error': 'Can\'t edit other user\'s post'
+                }, status=403)
+
             post.post = form.cleaned_data['post']
             post.save()
 
-            return HttpResponse(status=204)
+            return JsonResponse(post.serialize(), status=200)
         
     
     form = NewPostForm(instance=post)

@@ -1,4 +1,4 @@
-<form action="{% url 'edit_post' post.id %}" method="post">
+<form action="{% url 'edit_post' post.id %}" method="post" id="edit-post{{post.id}}-form">
     {% csrf_token %}
     <h3 class="mb-3">Edit post</h3>
     {{ form.post }}
