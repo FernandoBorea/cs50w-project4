@@ -26,11 +26,18 @@
                 <div class="card-body my-auto">
                     <div class="post-container" id="post{{ post.id }}">
                         <h6 class="card-title">{{ post.post }}</h6>
-                        <a href="#">Like</a> <span class="text-muted">~</span>
-                        <p class="m-0 like-count text-muted">{{ post.likes.count }}</p>
+                        {% if not user.is_authenticated %}
+                            <button class="btn btn-link like_post p-0 border-0" data-targetpost='{{ post.id }}' disabled>Like</button> <span class="text-muted">~</span>
+                        {% elif user not in post.likes.all %}
+                            <button class="btn btn-link like_post p-0 border-0" data-targetpost='{{ post.id }}'>Like</button> <span class="text-muted">~</span>
+                        {% else %}
+                            <button class="btn btn-link unlike_post p-0 border-0" data-targetpost='{{ post.id }}'>Unike</button> <span class="text-muted">~</span>
+                        {% endif %}
+
+                        <p class="m-0 like-count text-muted" id="post{{ post.id }}likes">{{ post.likes.count }}</p>
                         
                         {% if post.owner == request.user %}
-                            <span class="text-muted">&nbsp;</spa><button href="" class="text-muted btn btn-link edit_post" data-targetpost="{{ post.id }}">Edit post</button>
+                            <span class="text-muted">&nbsp;</spa><button href="" class="text-muted btn btn-link edit_post p-0 border-0" data-targetpost="{{ post.id }}">Edit post</button>
                         {% endif %}
                     </div>
                 </div>

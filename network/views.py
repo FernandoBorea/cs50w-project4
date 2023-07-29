@@ -251,3 +251,28 @@ def edit_post(request, post_id):
         'form': form,
         'post': post
     })
+
+
+@csrf_exempt
+@login_required(login_url='login')
+def like(request, post_id):
+
+    if request.method == 'PUT':
+
+        data = json.loads(request.body)
+        user = request.user
+        post = Post.objects.get(pk=post_id)
+        
+        if data.get('action') is not None and data.get('action') == 'like':
+            post.likes.add(user)
+        
+        elif data.get('action') is not None and data.get('action') == 'unlike':
+            post.likes.remove(user)
+        
+        post.save()
+
+        return JsonResponse({
+            'like_count': post.likes.count()
+        }, status=200)
+    
+    return HttpResponseRedirect(reverse('index'))

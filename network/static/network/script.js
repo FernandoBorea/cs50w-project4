@@ -1,21 +1,35 @@
+// Prepare anonymous functions
+const follow_listener = function() {follow_manager('follow')};
+const unfollow_listener = function() {follow_manager('unfollow')};
+const like_listener = function () {like_post('like')};
+const unlike_listener = function () {like_post('unlike')};
+
 document.addEventListener('DOMContentLoaded', function() {
     
     // Add listeners to buttons
     follow = document.querySelector('#follow')
     
     if (follow !== null) {
-        follow.addEventListener('click', function() {follow_manager('follow')});
+        follow.addEventListener('click', follow_listener);
     }
     
     unfollow = document.querySelector('#unfollow');
 
     if (unfollow !== null) {
-        unfollow.addEventListener('click', function() {follow_manager('unfollow')});
+        unfollow.addEventListener('click', unfollow_listener);
     }
 
-    // Add listener to post edit links
+    // Add listener to post edit and like buttons
     document.querySelectorAll('.edit_post').forEach(function(element) {
         element.addEventListener('click', edit_post);
+    });
+
+    document.querySelectorAll('.like_post').forEach(function(element) {
+        element.addEventListener('click', like_listener);
+    });
+
+    document.querySelectorAll('.unlike_post').forEach(function(element) {
+        element.addEventListener('click', unlike_listener);
     });
 
 });
@@ -43,14 +57,14 @@ function follow_manager(action) {
             const follow_button = document.querySelector('#follow');
             follow_button.id = 'unfollow';
             follow_button.innerHTML = 'Unfollow';
-            follow_button.removeEventListener('click', null);
-            follow_button.addEventListener('click', function () {follow_manager('unfollow')});
+            follow_button.removeEventListener('click', follow_listener);
+            follow_button.addEventListener('click', unfollow_listener);
         } else {
             const unfollow_button = document.querySelector('#unfollow');
             unfollow_button.id = 'follow';
             unfollow_button.innerHTML = 'Follow';
-            unfollow_button.removeEventListener('click', null);
-            unfollow_button.addEventListener('click', function () {follow_manager('follow')});
+            unfollow_button.removeEventListener('click', unfollow_listener);
+            unfollow_button.addEventListener('click', follow_listener);
         }
     })
 }
@@ -99,7 +113,7 @@ function post_editor(post_id) {
         like_button.innerHTML = 'Like';
 
         const like_sep = document.createElement('span');
-        like_sep.innerHTML = '~';
+        like_sep.innerHTML = ' ~ ';
         like_sep.className = 'text-muted';
 
         const like_count = document.createElement('p');
@@ -127,4 +141,36 @@ function post_editor(post_id) {
 
     // Prevent form submission
     event.preventDefault();
+}
+
+
+function like_post(action) {
+
+    const button = event.target;
+    const post_id = button.dataset.targetpost;
+
+    // Send API request to follow
+    fetch(`/like/${post_id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            'action': action
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.querySelector(`#post${post_id}likes`).innerHTML = data.like_count;
+
+        if (action == 'like') {
+            button.className = 'btn btn-link unlike_post p-0 border-0';
+            button.innerHTML = 'Unlike';
+            button.removeEventListener('click', like_listener);
+            button.addEventListener('click', unlike_listener);
+
+        } else {
+            button.className = 'btn btn-link like_post p-0 border-0';
+            button.innerHTML = 'Like';
+            button.removeEventListener('click', unlike_listener);
+            button.addEventListener('click', like_listener);
+        }
+    });
 }
